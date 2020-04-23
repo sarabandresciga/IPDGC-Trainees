@@ -42,9 +42,9 @@ cut -f1-$colct RHOT1_WGS.annovar.hg38_multianno.txt > RHOT1.trimmed.annotation.t
 
 ```
 awk '$6=="exonic" {print}' RHOT1.trimmed.annotation.txt > RHOT1.trimmed.annotation.coding.variants.WGS.txt
-awk '{ print $1":"$2 }' RHOT1.trimmed.annotation.coding.variants.WGS.txt > RHOT1.trimmed.annotation.coding.variants.WGS.SNPs.txt
+awk '{ print $1" "$2" "$2" "$7}' RHOT1.trimmed.annotation.coding.variants.WGS.txt > RHOT1.trimmed.annotation.coding.variants.WGS.SNPs.txt
 
-plink --bfile RHOT1_WGS_AMP_PD_pheno_sex --extract range RHOT1.coding.positions.txt --recode 'vcf-fid' --out RHOT1_CODING_AMP
+plink --bfile RHOT1_WGS_AMP_PD_pheno_sex --extract range RHOT1.trimmed.annotation.coding.variants.WGS.txt --recode 'vcf-fid' --out RHOT1_CODING_AMP
 
 bgzip RHOT1_CODING_AMP.vcf
 tabix -f -p vcf RHOT1_CODING_AMP.vcf.gz
@@ -131,7 +131,7 @@ cut -f1-$colct RHOT1.GWAS.annovar.hg19_multianno.txt > RHOT1.GWAS.trimmed.annota
 
 ```
 awk '$6=="exonic" {print}' RHOT1.GWAS.trimmed.annotation.txt > RHOT1.GWAS.trimmed.annotation.coding.variants.txt
-awk '{ print $1":"$2 }' RHOT1.GWAS.trimmed.annotation.coding.variants.txt > RHOT1.trimmed.annotation.coding.variants.SNPs.txt
+awk '{ print $1" "$2" "$2" "$7}' RHOT1.GWAS.trimmed.annotation.coding.variants.txt > RHOT1.trimmed.annotation.coding.variants.SNPs.txt
 
 plink --bfile RHOT1.GWAS  --recode 'vcf-fid' --extract range RHOT1.trimmed.annotation.coding.variants.SNPs.txt --out RHOT1.CODING.GWAS
 bgzip RHOT1.CODING.GWAS.vcf
@@ -200,9 +200,9 @@ cut -f1-$colct RHOT2_WGS.annovar.hg38_multianno.txt > RHOT2.trimmed.annotation.t
 
 ```
 awk '$6=="exonic" {print}' RHOT2.trimmed.annotation.txt > RHOT2.trimmed.annotation.coding.variants.WGS.txt
-awk '{ print $1":"$2 }' RHOT2.trimmed.annotation.coding.variants.WGS.txt > RHOT2.trimmed.annotation.coding.variants.WGS.SNPs.txt
+awk '{print $1" "$2" "$2" "$7}' RHOT2.trimmed.annotation.coding.variants.WGS.txt > RHOT2.trimmed.annotation.coding.variants.WGS.SNPs.txt
 
-plink --bfile RHOT2_WGS_AMP_PD_pheno_sex --extract range RHOT2.coding.positions.txt --recode 'vcf-fid' --out RHOT2_CODING_AMP
+plink --bfile RHOT2_WGS_AMP_PD_pheno_sex --extract range RHOT2.trimmed.annotation.coding.variants.WGS.txt --recode 'vcf-fid' --out RHOT2_CODING_AMP
 
 bgzip RHOT2_CODING_AMP.vcf
 tabix -f -p vcf RHOT2_CODING_AMP.vcf.gz
@@ -260,7 +260,8 @@ cut -f1-$colct RHOT2.GWAS.annovar.hg19_multianno.txt > RHOT2.GWAS.trimmed.annota
 
 ```
 awk '$6=="exonic" {print}' RHOT2.GWAS.trimmed.annotation.txt > RHOT2.GWAS.trimmed.annotation.coding.variants.txt
-awk '{ print $1":"$2 }' RHOT2.GWAS.trimmed.annotation.coding.variants.txt > RHOT2.trimmed.annotation.coding.variants.SNPs.txt
+awk ''{print $1" "$2" "$2" "$7}' RHOT2.GWAS.trimmed.annotation.coding.variants.txt > RHOT2.trimmed.annotation.coding.variants.SNPs.txt
+
 
 plink --bfile RHOT2.GWAS  --recode 'vcf-fid' --extract range RHOT2.trimmed.annotation.coding.variants.SNPs.txt --out RHOT2.CODING.GWAS
 bgzip RHOT2.CODING.GWAS.vcf
