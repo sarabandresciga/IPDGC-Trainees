@@ -102,7 +102,6 @@ RHOT1 positions on hg19
 plink --bfile /data/LNG/saraB/HARDCALLS_PD_september_2018_no_cousins --remove-fam /data/LNG/saraB/NeuroX.fID.txt --chr 5 --geno 0.15 --from-bp 159990127 --to-bp 160279221 --make-bed --out RHOT1.GWAS
 
 plink --bfile RHOT1.GWAS --fisher --covar /data/LNG/saraB/IPDGC_all_samples_covariates.tab --covar-name sex,AGE,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --out RHOT1_GWAS --make-bed --ci 0.95
-
 ```
 
 ### Annotate VCF with ANNOVAR 
@@ -124,7 +123,6 @@ cd /data/LNG/saraB/RHOT1/hardcallsNoNeuroX/annotation
 head -1 RHOT1.GWAS.annovar.hg19_multianno.txt > header.txt
 colct="$(wc -w header.txt| cut -f1 -d' ')"
 cut -f1-$colct RHOT1.GWAS.annovar.hg19_multianno.txt > RHOT1.GWAS.trimmed.annotation.txt
-
 ```
 
 ### Burden analysis
@@ -138,7 +136,6 @@ awk '{ print $1":"$2 }' RHOT1.GWAS.trimmed.annotation.coding.variants.txt > RHOT
 plink --bfile RHOT1.GWAS  --recode 'vcf-fid' --extract range RHOT1.trimmed.annotation.coding.variants.SNPs.txt --out RHOT1.CODING.GWAS
 bgzip RHOT1.CODING.GWAS.vcf
 tabix -f -p vcf RHOT1.CODING.GWAS.vcf.gz
-
 ```
 
 #### MAF < 0.03
@@ -195,7 +192,6 @@ table_annovar.pl RHOT2_WGS_AMP_PD_pheno_sex.vcf.gz $ANNOVAR_DATA/hg38 -buildver 
 head -1 RHOT2_WGS.annovar.hg38_multianno.txt > header.txt
 colct="$(wc -w header.txt| cut -f1 -d' ')"
 cut -f1-$colct RHOT2_WGS.annovar.hg38_multianno.txt > RHOT2.trimmed.annotation.txt
-
 ```
 
 ### Burden analysis 
@@ -210,7 +206,6 @@ plink --bfile RHOT2_WGS_AMP_PD_pheno_sex --extract range RHOT2.coding.positions.
 
 bgzip RHOT2_CODING_AMP.vcf
 tabix -f -p vcf RHOT2_CODING_AMP.vcf.gz
-
 ```
 
 #### MAF < 0.03
@@ -219,12 +214,73 @@ tabix -f -p vcf RHOT2_CODING_AMP.vcf.gz
 
 ```
 rvtest --noweb --inVcf RHOT2_WGS_AMP_PD_pheno_sex.vcf.gz --pheno /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar-name SEX,AAO,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_PD_BURDEN.RHOT2.maf003
-
 ```
 
 #### CODING VARIANTS 
 
 ```
 rvtest --noweb --inVcf RHOT2_CODING_AMP.vcf.gz --pheno /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar-name SEX,AAO,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_PD_BURDEN.RHOT2.maf003_CODING
+```
+## GWAS analysis 
 
+RHOT1 positions on hg19
+
+### Fisher exact test 
+
+```
+plink --bfile /data/LNG/saraB/HARDCALLS_PD_september_2018_no_cousins --remove-fam /data/LNG/saraB/NeuroX.fID.txt --chr 5 --geno 0.15 --from-bp 159990127 --to-bp 160279221 --make-bed --out RHOT2.GWAS
+
+plink --bfile RHOT1.GWAS --fisher --covar /data/LNG/saraB/IPDGC_all_samples_covariates.tab --covar-name sex,AGE,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --out RHOT2_GWAS --make-bed --ci 0.95
+```
+
+### Annotate VCF with ANNOVAR 
+
+```
+plink --bfile RHOT2.GWAS --recode 'vcf-fid' --out RHOT2.GWAS
+bgzip RHOT2.GWAS.vcf
+tabix -f -p vcf RHOT2.GWAS.vcf.gz
+
+table_annovar.pl /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/vcf/RHOT1.GWAS.vcf.gz /data/LNG/saraB/annovar/humandb/ -buildver hg19 \
+--thread 16 \
+-out /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/annotation/RHOT2.GWAS.annovar \
+-remove -protocol avsnp147,refGene,ensGene,gnomad211_genome \
+-operation f,g,g,f \
+-nastring . \
+-vcfinput
+
+cd /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/annotation
+head -1 RHOT2.GWAS.annovar.hg19_multianno.txt > header.txt
+colct="$(wc -w header.txt| cut -f1 -d' ')"
+cut -f1-$colct RHOT2.GWAS.annovar.hg19_multianno.txt > RHOT2.GWAS.trimmed.annotation.txt
+```
+
+### Burden analysis
+
+#### Generating list of coding variants
+
+```
+awk '$6=="exonic" {print}' RHOT2.GWAS.trimmed.annotation.txt > RHOT2.GWAS.trimmed.annotation.coding.variants.txt
+awk '{ print $1":"$2 }' RHOT2.GWAS.trimmed.annotation.coding.variants.txt > RHOT2.trimmed.annotation.coding.variants.SNPs.txt
+
+plink --bfile RHOT2.GWAS  --recode 'vcf-fid' --extract range RHOT2.trimmed.annotation.coding.variants.SNPs.txt --out RHOT2.CODING.GWAS
+bgzip RHOT2.CODING.GWAS.vcf
+tabix -f -p vcf RHOT2.CODING.GWAS.vcf.gz
+```
+
+#### MAF < 0.03
+
+#### ALL VARIANTS 
+
+```
+cd /data/LNG/saraB/RHOT1
+
+rvtest --noweb --inVcf /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/vcf/RHOT2.GWAS.vcf.gz --pheno /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar-name sex,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --burden cmc,zeggini,mb,fp,cmcWald --kernel skat,skato --geneFile /data/LNG/saraB/refFlat_hg19.txt --freqUpper 0.03 --out hardcallsNoNeuroX/burden/BURDEN.RHOT2.maf03
+
+```
+#### CODING VARIANTS 
+
+```
+cd /data/LNG/saraB/RHOT2
+
+rvtest --noweb --inVcf /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/vcf/RHOT2.CODING.GWAS.vcf.gz --pheno /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar-name sex,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --burden cmc,zeggini,mb,fp,cmcWald --kernel skat,skato --geneFile /data/LNG/saraB/refFlat_hg19.txt --freqUpper 0.03 --out hardcallsNoNeuroX/burden/BURDEN.RHOT2.CODING.maf03
 ```
