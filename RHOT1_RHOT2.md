@@ -64,7 +64,7 @@ rvtest --noweb --inVcf RHOT1_WGS_AMP_PD_pheno_sex.vcf.gz --pheno /data/LNG/saraB
 rvtest --noweb --inVcf RHOT1_CODING_AMP.vcf.gz --pheno /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar-name SEX,AAO,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_PD_BURDEN.RHOT1.maf003_CODING
 ```
 
-### Extract your gene(s) from PD + AAO GWAS summary stats without 23andMe data 
+### Extract your gene(s) from PD summary stats without 23andMe data 
 
 ```
 * listofgenes.txt will have the following format: chr start stop gene
