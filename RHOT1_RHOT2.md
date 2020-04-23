@@ -223,14 +223,14 @@ rvtest --noweb --inVcf RHOT2_CODING_AMP.vcf.gz --pheno /data/LNG/saraB/AMP_PD/co
 ```
 ## GWAS analysis 
 
-RHOT1 positions on hg19
+RHOT2 positions on hg19
 
 ### Fisher exact test 
 
 ```
 plink --bfile /data/LNG/saraB/HARDCALLS_PD_september_2018_no_cousins --remove-fam /data/LNG/saraB/NeuroX.fID.txt --chr 5 --geno 0.15 --from-bp 159990127 --to-bp 160279221 --make-bed --out RHOT2.GWAS
 
-plink --bfile RHOT1.GWAS --fisher --covar /data/LNG/saraB/IPDGC_all_samples_covariates.tab --covar-name sex,AGE,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --out RHOT2_GWAS --make-bed --ci 0.95
+plink --bfile RHOT2.GWAS --fisher --covar /data/LNG/saraB/IPDGC_all_samples_covariates.tab --covar-name sex,AGE,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --out RHOT2_GWAS --make-bed --ci 0.95
 ```
 
 ### Annotate VCF with ANNOVAR 
@@ -272,7 +272,7 @@ tabix -f -p vcf RHOT2.CODING.GWAS.vcf.gz
 #### ALL VARIANTS 
 
 ```
-cd /data/LNG/saraB/RHOT1
+cd /data/LNG/saraB/RHOT2
 
 rvtest --noweb --inVcf /data/LNG/saraB/RHOT2/hardcallsNoNeuroX/vcf/RHOT2.GWAS.vcf.gz --pheno /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar-name sex,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --burden cmc,zeggini,mb,fp,cmcWald --kernel skat,skato --geneFile /data/LNG/saraB/refFlat_hg19.txt --freqUpper 0.03 --out hardcallsNoNeuroX/burden/BURDEN.RHOT2.maf03
 
