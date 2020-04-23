@@ -157,7 +157,7 @@ rvtest --noweb --inVcf /data/LNG/saraB/RHOT1/hardcallsNoNeuroX/vcf/RHOT1.GWAS.vc
 cd /data/LNG/saraB/RHOT1
 
 rvtest --noweb --inVcf /data/LNG/saraB/RHOT1/hardcallsNoNeuroX/vcf/RHOT1.CODING.GWAS.vcf.gz --pheno /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar /data/LNG/saraB/IPDGC_all_samples_covariates.vcf.tab --covar-name sex,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --burden cmc,zeggini,mb,fp,cmcWald --kernel skat,skato --geneFile /data/LNG/saraB/refFlat_hg19.txt --freqUpper 0.03 --out hardcallsNoNeuroX/burden/BURDEN.RHOT1.CODING.maf03
-
+```
 
 ------------------------------------------------------------------------------------------------------------------------------
 
