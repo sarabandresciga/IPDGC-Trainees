@@ -1,4 +1,4 @@
-﻿# ATP10B
+# ATP10B
 
 Raquel Real (UCL), Anni Moore (NIH), Sara Bandres-Ciga (NIH)
 
@@ -13,7 +13,7 @@ module load plink samtools rvtests R annovar
 ```
 plink --bfile ATP10B_WGS_AMP_PD --pheno /data/LNG/saraB/AMP_PD/pheno_Mike.txt --make-bed --out ATP10B_WGS_AMP_PD_pheno
 plink --bfile ATP10B_WGS_AMP_PD_pheno --update-sex /data/LNG/saraB/AMP_PD/toupdatesex.txt --make-bed --out ATP10B_WGS_AMP_PD_pheno_sex
-plink --bfile ATP10B_WGS_AMP_PD_pheno_sex --fisher --pheno /data/LNG/saraB/AMP_PD/pheno_Mike.txt --covar /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar-name SEX, AGE, PC1, PC2, PC3, PC4, PC5, PC6, PC7, PC8, PC9, PC10 --out ATP10B_WGS_AMP_PD --ci 0.95
+plink --bfile ATP10B_WGS_AMP_PD_pheno_sex --fisher --pheno /data/LNG/saraB/AMP_PD/pheno_Mike.txt --out ATP10B_WGS_AMP_PD --ci 0.95
 ```
 
 ### Annotation
@@ -44,9 +44,9 @@ cut -f1-$colct ATP10B_WGS.annovar.hg38_multianno.txt > ATP10B.trimmed.annotation
 
 ```
 awk '$6=="exonic" {print}' ATP10B.trimmed.annotation.txt > ATP10B.trimmed.annotation.coding.variants.WGS.txt
-awk '{print $1" "$2" "$2" "$7}' ATP10B.trimmed.annotation.coding.variants.WGS.txt > ATP10B.trimmed.annotation.coding.variants.WGS.SNPs.txt
+awk '{ print $1":"$2 }' ATP10B.trimmed.annotation.coding.variants.WGS.txt > ATP10B.trimmed.annotation.coding.variants..WGS.SNPs.txt
 
-plink --bfile ATP10B_WGS_AMP_PD_pheno_sex --extract range ATP10B.trimmed.annotation.coding.variants.WGS.SNPs.txt --recode 'vcf-fid' --out ATP10B_CODING_AMP
+plink --bfile ATP10B_WGS_AMP_PD_pheno_sex --extract range ATP10B.trimmed.annotation.coding.variants.WGS.SNPs.txt  ---recode 'vcf-fid' --out ATP10B_CODING_AMP
 
 bgzip ATP10B_CODING_AMP.vcf
 tabix -f -p vcf ATP10B_CODING_AMP.vcf.gz
@@ -66,7 +66,7 @@ rvtest --noweb --inVcf ATP10B_WGS_AMP_PD_pheno_sex.vcf.gz --pheno /data/LNG/sara
 rvtest --noweb --inVcf ATP10B_CODING_AMP.vcf.gz --pheno /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar /data/LNG/saraB/AMP_PD/covs_Mike.txt --covar-name SEX,AAO,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10 --kernel skat,skato --burden cmc,zeggini,mb,fp,cmcWald --geneFile /data/LNG/makariousmb/refFlat_hg38.txt --freqUpper 0.03 --out AMP_PD_BURDEN.ATP10B.maf003_CODING
 ```
 
-### Extract your gene(s) from PD + AAO GWAS summary stats 
+### Extract your gene(s) from PD + AAO GWAS summary stats (no23andMe)
 
 * listofgenes.txt will have the following format: chr start stop gene
 
@@ -77,7 +77,7 @@ library(data.table)
 library(dplyr)
 library(tidyr)
 library(plyr)
-data <- fread("NallsEtAl2019.tab", header = T)
+data <- fread("NallsEtAl2019_no23andMe.tab", header = T)
 data$CHR <- ldply(strsplit(as.character(data$SNP), split = ":"))[[1]]
 data$BP <- ldply(strsplit(as.character(data$SNP), split = ":"))[[2]]
 genesTemp <- read.table("listofgenes.txt", sep = "", header = F)
@@ -93,7 +93,7 @@ for(i in 1:length(genes$GENE))
   fwrite(output, file = paste(thisGene,"_variants.tab", sep = ""), na = "NA", quote = F, row.names = F, sep = "\t")
 }
 
-data2 <- fread("IPDGC_AAO_GWAS_sumstats_april_2018.txt", header = T)
+data2 <- fread("IPDGC_AAO_GWAS_sumstats_april_2018_no23andMe.txt", header = T)
 data2$CHR <- ldply(strsplit(as.character(data2$MarkerName), split = ":"))[[1]]
 data2$BP <- ldply(strsplit(as.character(data2$MarkerName), split = ":"))[[2]]
 #colnames(data2) <- c("chr","pos","no","bp","A1","A2")
@@ -120,7 +120,7 @@ ATP10B positions on hg19
 ```
 plink --bfile /data/LNG/saraB/HARDCALLS_PD_september_2018_no_cousins --remove-fam /data/LNG/saraB/NeuroX.fID.txt --chr 5 --geno 0.15 --from-bp 159990127 --to-bp 160279221 --make-bed --out ATP10B.GWAS
 
-plink --bfile ATP10B.GWAS --fisher --covar /data/LNG/saraB/IPDGC_all_samples_covariates.tab --covar-name sex,AGE,PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10,DUTCH,FINLAND,GERMANY,MCGILL,MF,NIA,OSLO,PROBAND,PROPARK,SHULMAN,SPAIN3,SPAIN4,TUBI,UK_GWAS,VANCE --out ATP10B_GWAS --make-bed --ci 0.95
+plink --bfile ATP10B.GWAS --fisher --out ATP10B_GWAS --make-bed --ci 0.95
 ```
 
 ### Annotation
@@ -152,7 +152,7 @@ cut -f1-$colct ATP10B.GWAS.annovar.hg19_multianno.txt > ATP10B.GWAS.trimmed.anno
 
 ```
 awk '$6=="exonic" {print}' ATP10B.GWAS.trimmed.annotation.txt > ATP10B.GWAS.trimmed.annotation.coding.variants.txt
-awk '{print $1" "$2" "$2" "$7}' ATP10B.GWAS.trimmed.annotation.coding.variants.txt > ATP10B.trimmed.annotation.coding.variants.SNPs.txt
+awk '{ print $1":"$2 }' ATP10B.GWAS.trimmed.annotation.coding.variants.txt > ATP10B.trimmed.annotation.coding.variants.SNPs.txt
 
 plink --bfile ATP10B.GWAS  --recode 'vcf-fid' --extract range ATP10B.trimmed.annotation.coding.variants.SNPs.txt --out ATP10B.CODING.GWAS
 bgzip ATP10B.CODING.GWAS.vcf
@@ -192,11 +192,11 @@ awk '$6=="exonic" {print}' ATP10B.trimmed.annotation.txt > ATP10B.trimmed.annota
 awk '{ print $1":"$2 }' ATP10B.trimmed.annotation.coding.variants.WGS.txt > ATP10B.trimmed.annotation.coding.variants..WGS.SNPs.txt
 ```
 
-#### Generating list of nonsynonymous variants
+#### Generating list of coding variants excluding synonymous
 
 ```
-awk '$9=="nonsynonymous" {print}' ATP10B.trimmed.annotation.coding.variants.WGS.txt > ATP10B.trimmed.annotation.coding.variants.WGS.nonsynonymous.txt
-awk '{ print $1":"$2 }' ATP10B.trimmed.annotation.coding.variants.WGS.nonsynonymous.txt > ATP10B.trimmed.annotation.coding.variants.WGS.nonsynonymous.SNPs.txt
+awk '!= synonymous" {print}' ATP10B.trimmed.annotation.coding.variants.WGS.txt > ATP10B.trimmed.annotation.coding.variants.WGS.not_synonymous.txt
+awk '{ print $1":"$2 }' ATP10B.trimmed.annotation.coding.variants.WGS.not_synonymous.txt > ATP10B.trimmed.annotation.coding.variants.WGS.not_synonymous.SNPs.txt
 ```
 
 #### Reformat 2nd column of plink file from rs ids to chr:pos to be able to extract
@@ -212,17 +212,17 @@ cp ATP10B_WGS_AMP_PD_pheno_sex.fam ATP10B_WGS_AMP_PD_pheno_sex_mod.fam
 cp ATP10B_WGS_AMP_PD_pheno_sex.bed ATP10B_WGS_AMP_PD_pheno_sex_mod.bed
 ```
 
-#### Filter and extract coding variants
+#### Filter and extract coding variants excluding synonymous
 
 ```
-plink --bfile /data/LNG/anni/ATP10B_2/ATP10B_WGS_AMP_PD_pheno_sex_mod --chr 5 --geno 0.15 --extract /data/LNG/anni/ATP10B_2/ATP10B.trimmed.annotation.coding.variants.SNPs.WGS.txt --make-bed --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING.VARIANTS.all
+plink --bfile /data/LNG/anni/ATP10B_2/ATP10B_WGS_AMP_PD_pheno_sex_mod --chr 5 --geno 0.15 --extract ATP10B.trimmed.annotation.coding.variants.WGS.not_synonymous.SNPs.txt --make-bed --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING_not_synonymous
 ```
 
-#### Recode to get genotypes of coding variants
+#### Recode to get genotypes of coding variants excluding synonymous
 
 ```
-plink --bfile /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING.VARIANTS.all --recode A --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING.VARIANTS.all.recode
-plink --bfile /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING.VARIANTS.maxmaf0.03 --recode A --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING.VARIANTS.maxmaf0.03.recode
+plink --bfile /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING_not_synonymous --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING_not_synonymous.maxmaf0.05 --max-maf 0.05
+plink --bfile /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING_not_synonymous.maxmaf0.05 --recode A --out /data/LNG/anni/ATP10B_2/ATP10B.WGS.CODING_not_synonymous.maxmaf0.05.recode
 ```
 
 #### Get genotypes as 2 (homoz for alternate allele), 1 (heterozygous) and 0 homoz for reference allele
